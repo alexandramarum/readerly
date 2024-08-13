@@ -6,12 +6,20 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct readerlyApp: App {
+    @StateObject private var libraryVm = LibraryViewModel()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(libraryVm)
+                .modelContainer(for : [
+                    Quote.self,
+                    Source.self
+                ])
         }
     }
 }

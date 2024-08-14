@@ -6,9 +6,9 @@
 //
 
 import PhotosUI
+import SwiftData
 import SwiftUI
 import VisionKit
-import SwiftData
 
 struct CameraPromptView: View {
     @Environment(\.modelContext) private var context: ModelContext
@@ -37,7 +37,7 @@ struct CameraPromptView: View {
                 .font(.largeTitle)
                 .bold()
                 .padding(-60)
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack {
                     TextEditor(text: $scannedText)
                         .frame(height: 200)
@@ -107,9 +107,19 @@ struct CameraPromptView: View {
                 }
                 
                 Section("Tags") {
-                    HStack {
-                        ForEach(tags) { tag in
-                            TagItemView(color: libraryVm.tagColors[tag.color] ?? Color.gray, title: tag.title)
+                    let rows = [
+                        GridItem(.adaptive(minimum: 100)), // Adjust the minimum width as needed
+                        GridItem(.adaptive(minimum: 100)),
+                    ]
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        LazyHGrid(rows: rows, spacing: 5) {
+                            ForEach(tags) { tag in
+                                TagItemView(color: libraryVm.tagColors[tag.color] ?? Color.gray, title: tag.title)
+                            }
+                            Button {} label: {
+                                Image(systemName: "plus.circle")
+                                    .bold()
+                            }
                         }
                     }
                 }
@@ -153,9 +163,7 @@ struct CameraPromptView: View {
             }
         }
         .onAppear {
-            if let quote = quote {
-                
-            }
+            if let quote = quote {}
         }
     }
     
@@ -163,7 +171,7 @@ struct CameraPromptView: View {
         // TODO: additional conditions:
         // 1. Must contain alphabetic characters
         for char in string {
-            if (char.lowercased() >= "a" && char.lowercased() <= "z") {
+            if char.lowercased() >= "a" && char.lowercased() <= "z" {
                 return false
             }
         }
@@ -174,18 +182,19 @@ struct CameraPromptView: View {
         var formatted = string
         // TODO: format scanned Text for submission
         // 1. remove quotations if they are present at the beginning or end of the string.
-        if (string.first == "\"" || string.first == "\'") {
+        if string.first == "\"" || string.first == "\'" {
             formatted = String(formatted.dropFirst())
         }
-        if (string.last == "\"" || string.last == "\'") {
+        if string.last == "\"" || string.last == "\'" {
             formatted = String(formatted.dropLast())
         }
         // 2. remove empty space at the beginning or end of the string
         while formatted.first == " " || formatted.first == "\n" {
             formatted = String(formatted.dropFirst())
         }
-        while formatted.last == " " || 
-            formatted.last == "\n" {
+        while formatted.last == " " ||
+            formatted.last == "\n"
+        {
             formatted = String(formatted.dropLast())
         }
         return formatted

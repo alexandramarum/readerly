@@ -18,7 +18,7 @@ struct TagItemView: View {
             .background(
                 RoundedRectangle(cornerRadius: 25.0)
                     .foregroundStyle(color)
-                    .opacity(0.5)
+                    .opacity(0.3)
             )
     }
 }
